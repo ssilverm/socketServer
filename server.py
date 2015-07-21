@@ -3,9 +3,9 @@ import SocketServer, subprocess, sys
 from threading import Thread
 import time
 from evdev import InputDevice, list_devices, InputEvent, ecodes, UInput
+import json
 
-
-HOST = '192.168.0.108'
+HOST = '192.168.50.10'
 PORT = 2000
 
 ''' Future capability to run commands '''
@@ -35,8 +35,12 @@ class SingleTCPHandler(SocketServer.BaseRequestHandler):
                 break
             if 'exit' in data:
                 break
-            elif 'up' in data:
-                doKey(ecodes.EV_KEY, ecodes.KEY_UP)
+            '''decode data'''
+            decode = json.loads(data)
+            inputType = decode['type']
+            inputKey = decode['key']
+            
+            doKey(inputType, inputKey)
 
             
             reply = "{'success': True }"
