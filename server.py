@@ -4,8 +4,9 @@ from threading import Thread
 import time
 from evdev import InputDevice, list_devices, InputEvent, ecodes, UInput
 import json
+import keys
 
-HOST = '192.168.50.10'
+HOST = '0.0.0.0'
 PORT = 2000
 
 ''' Future capability to run commands '''
@@ -18,6 +19,7 @@ def pipe_command(arg_list, standard_input=False):
         return subp.communicate()[0]
     return subp.communicate(standard_input)[0]
 
+'''doKey(ecodes.EV_KEY,ecodes.KEY_UP)'''
 def doKey(inputType, inputKey):
     ev = InputEvent(time.time(), 0, inputType, inputKey, 1)
     with UInput() as ui:
@@ -37,8 +39,8 @@ class SingleTCPHandler(SocketServer.BaseRequestHandler):
                 break
             '''decode data'''
             decode = json.loads(data)
-            inputType = decode['type']
-            inputKey = decode['key']
+            inputType = keys.typeList[decode['type']]
+            inputKey = keys.keyList[decode['key']]
             
             doKey(inputType, inputKey)
 
