@@ -83,6 +83,10 @@ keyList = {
     "KEY_KP3"        :          81,
     "KEY_KP0"        :          82,
     "KEY_KPDOT"      :          83,
+    "KEY_UP"         :          103,
+    "KEY_LEFT"       :          105,
+    "KEY_RIGHT"      :          106,
+    "KEY_DOWN"       :          108,
 
     '''buttons misc'''
     "BTN_0"          :          256,
