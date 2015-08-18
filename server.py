@@ -32,22 +32,22 @@ class SingleTCPHandler(SocketServer.BaseRequestHandler):
         # self.request is the client connection
         while True:
             data = self.request.recv(1024)  # clip input at 1Kb
-            print data
             if not data:
                 break
             if 'exit' in data:
                 break
             '''decode data'''
-            decode = json.loads(data)
-            inputType = keys.typeList[decode['type']]
-            inputKey = keys.keyList[decode['key']]
-            
-            doKey(inputType, inputKey)
-
-            
-            reply = "{'success': True }"
-            if reply is not None:
-                self.request.send(reply)
+            dataChunks = data.split("|")
+            for d in dataChunks[:-1]:
+                decode = json.loads(d)
+                inputType = keys.keyType[str(decode['type'])]
+                inputKey = keys.keyList[str(decode['key'])]
+                
+                doKey(inputType, inputKey)
+                
+                reply = "{'success': True }"
+                if reply is not None:
+                    self.request.send(reply)
         self.request.close()
 
 
