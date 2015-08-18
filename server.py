@@ -8,6 +8,7 @@ import keys
 
 HOST = '0.0.0.0'
 PORT = 2000
+ui = UInput(name="STCKServer")
 
 ''' Future capability to run commands '''
 ''' example: reply = pipe_command(my_unix_command, data)'''
@@ -20,11 +21,11 @@ def pipe_command(arg_list, standard_input=False):
     return subp.communicate(standard_input)[0]
 
 '''doKey(ecodes.EV_KEY,ecodes.KEY_UP)'''
-def doKey(inputType, inputKey):
-    ev = InputEvent(time.time(), 0, inputType, inputKey, 1)
-    with UInput() as ui:
-        ui.write_event(ev)
-        ui.syn()
+def doKey(inputType, inputKey, pressedState):
+    ev = InputEvent(time.time(), 0, inputType, inputKey, pressedState)
+    #with UInput() as ui:
+    ui.write_event(ev)
+    ui.syn()
 
 class SingleTCPHandler(SocketServer.BaseRequestHandler):
     "One instance per connection.  Override handle(self) to customize action."
@@ -42,8 +43,9 @@ class SingleTCPHandler(SocketServer.BaseRequestHandler):
                 decode = json.loads(d)
                 inputType = keys.keyType[str(decode['type'])]
                 inputKey = keys.keyList[str(decode['key'])]
+                inputState = int(decode['state'])
                 
-                doKey(inputType, inputKey)
+                doKey(inputType, inputKey, inputState)
                 
                 reply = "{'success': True }"
                 if reply is not None:
